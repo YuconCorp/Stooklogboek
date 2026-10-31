@@ -50,8 +50,6 @@ h1,h2,button,label,select,input,.ui{font-family:system-ui,sans-serif}
   <fieldset><legend class="font-semibold" data-i="types"></legend><div class="flex flex-wrap gap-2 mt-1" id="types"></div></fieldset>
   <fieldset><legend class="font-semibold" data-i="sym"></legend><div class="flex flex-wrap gap-2 mt-1" id="sym"></div></fieldset>
   <label><span data-i="note"></span><textarea class="f" id="note" rows="3" maxlength="1000"></textarea></label>
-  <label><span data-i="photo"></span><input class="f" type="file" id="foto" accept="image/*" capture="environment"></label>
-  <p class="text-sm p-3 rounded bg-red-50 border border-red-300" data-i="avg"></p>
   <p class="text-sm opacity-75" data-i="pub"></p>
   <button class="b" data-i="save"></button>
   <p id="st" role="status" class="font-semibold"></p>
@@ -59,7 +57,7 @@ h1,h2,button,label,select,input,.ui{font-family:system-ui,sans-serif}
 </section>
 <section>
  <h2 class="text-xl font-bold mb-3" data-i="log"></h2>
- <div class="grid grid-cols-3 gap-3 mb-4 ui text-center" id="stats"></div>
+ <div class="grid grid-cols-2 gap-3 mb-4 ui text-center" id="stats"></div>
  <div class="grid sm:grid-cols-4 gap-2 mb-3 ui">
   <input class="f" id="q" data-p="search">
   <select class="f" id="fc"></select>
@@ -110,13 +108,12 @@ $('fm').onsubmit=async e=>{e.preventDefault();const c=document.querySelector('in
  if(!c||!ty.length)return msg(t('need'));
  const f=new FormData(),v=i=>$(i).value.trim();
  Object.entries({datum:v('datum'),begintijd:v('begin'),eindtijd:v('eind'),land:v('land'),locatie_postcode:v('loc'),straatnaam:v('street'),stookwijzer_code:c.value,windrichting:v('dir'),windkracht:v('bft'),overlast_types:JSON.stringify(ty),klachten:JSON.stringify([...document.querySelectorAll('input[name=sy]:checked')].map(x=>x.value)),opmerking:v('note')}).forEach(([k,x])=>f.append(k,x));
- if($('foto').files[0])f.append('foto',$('foto').files[0]);
  try{const r=await fetch('/api/meldingen',{method:'POST',body:f});if(!r.ok)throw 0;$('fm').reset();now();msg(t('saved'));await load()}catch{msg(t('err'))}};
 function waShare(x){window.open('https://wa.me/?text='+encodeURIComponent(t('wa')+(x?' '+x:'')+' '+location.origin))}
 $('wa').onclick=()=>waShare();
 function render(){const q=$('q').value.toLowerCase(),c=$('fc').value,d=$('fd').value,old=$('so').value==='old';
  shown=all.filter(m=>(!q||`${m.locatie_postcode} ${m.straatnaam}`.toLowerCase().includes(q))&&(!c||m.stookwijzer_code===c)&&(!d||m.datum>=d)).sort((a,b)=>(a.datum+a.begintijd).localeCompare(b.datum+b.begintijd)*(old?1:-1));
- const st=[[t('total'),shown.length],[t('bad'),shown.filter(m=>m.stookwijzer_code!=='geel').length],[t('photos'),shown.filter(m=>m.foto_url).length]];
+ const st=[[t('total'),shown.length],[t('bad'),shown.filter(m=>m.stookwijzer_code!=='geel').length]];
  $('stats').innerHTML=st.map(([l,n])=>`<div class="bg-white rounded-lg p-3"><div class="text-2xl font-bold">${n}</div><div class="text-xs">${l}</div></div>`).join('');
  const bg={geel:'#facc15',oranje:'#f97316',rood:'#dc2626'};
  $('list').innerHTML=shown.map((m,i)=>`<article class="bg-white rounded-lg p-4 ui border-l-8" style="border-color:${bg[m.stookwijzer_code]||'#999'}">
