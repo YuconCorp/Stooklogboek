@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stooklogboek</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<style>
+body{background:#e9edec;color:#1f2a2e;font-family:Georgia,serif}
+h1,h2,button,label,select,input,.ui{font-family:system-ui,sans-serif}
+.chip{position:relative}.chip input{position:absolute;opacity:0}
+.chip span{display:block;padding:.5rem .75rem;border:1px solid #8a999c;border-radius:.5rem;cursor:pointer;font:.9rem system-ui,sans-serif;background:#fff}
+.chip input:checked+span{background:#1f2a2e;color:#fff;border-color:#1f2a2e}
+.chip input:focus-visible+span,input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #c2410c;outline-offset:1px}
+.code input:checked+span.geel{background:#facc15;color:#000;border-color:#a16207}
+.code input:checked+span.oranje{background:#f97316;color:#000;border-color:#9a3412}
+.code input:checked+span.rood{background:#dc2626;color:#fff;border-color:#7f1d1d}
+.f{width:100%;border:1px solid #8a999c;border-radius:.5rem;padding:.5rem;background:#fff}
+.b{border-radius:.5rem;padding:.55rem .9rem;font-weight:600;background:#1f2a2e;color:#fff}
+.b2{border-radius:.5rem;padding:.5rem .8rem;border:1px solid #1f2a2e;background:transparent}
+</style></head>
+<body>
+<header class="bg-[#1f2a2e] text-white">
+ <div class="max-w-4xl mx-auto p-4 flex flex-wrap items-center gap-3 justify-between">
+  <div><h1 class="text-2xl font-bold" data-i="title"></h1><p class="text-sm opacity-80 max-w-xl" data-i="sub"></p></div>
+  <div class="flex gap-2 items-center ui">
+   <button class="b2 !border-white" id="wa" data-i="share"></button>
+   <select id="lang" class="text-black rounded p-2" aria-label="Language"><option value="nl">🇳🇱 NL</option><option value="en">🇬🇧 EN</option></select>
+  </div>
+ </div>
+</header>
+<main class="max-w-4xl mx-auto p-4 space-y-8">
+<section>
+ <h2 class="text-xl font-bold mb-3" data-i="form"></h2>
+ <form id="fm" class="space-y-4 ui">
+  <div class="flex flex-wrap gap-2"><button type="button" class="b2" id="bw" data-i="weather"></button><button type="button" class="b2" id="bg" data-i="gps"></button></div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+   <label><span data-i="date"></span><input class="f" type="date" id="datum" required></label>
+   <label><span data-i="start"></span><input class="f" type="time" id="begin" required></label>
+   <label><span data-i="end"></span><input class="f" type="time" id="eind"></label>
+   <label><span data-i="country"></span><input class="f" id="land" maxlength="2" value="NL"></label>
+  </div>
+  <div class="grid md:grid-cols-2 gap-3">
+   <label><span data-i="loc"></span><input class="f" id="loc" maxlength="60"></label>
+   <label><span data-i="street"></span><input class="f" id="street" maxlength="100"></label>
+  </div>
+  <p id="dup" class="hidden p-3 rounded bg-amber-100 border border-amber-400 text-sm" data-i="dup"></p>
+  <fieldset><legend class="font-semibold" data-i="code"></legend><div class="grid sm:grid-cols-3 gap-2 code mt-1" id="codes"></div></fieldset>
+  <div class="grid grid-cols-2 gap-3">
+   <label><span data-i="dir"></span><select class="f" id="dir"></select></label>
+   <label><span data-i="bft"></span><input class="f" type="number" min="0" max="12" id="bft" value="0" required></label>
+  </div>
+  <fieldset><legend class="font-semibold" data-i="types"></legend><div class="flex flex-wrap gap-2 mt-1" id="types"></div></fieldset>
+  <fieldset><legend class="font-semibold" data-i="sym"></legend><div class="flex flex-wrap gap-2 mt-1" id="sym"></div></fieldset>
+  <label><span data-i="note"></span><textarea class="f" id="note" rows="3" maxlength="1000"></textarea></label>
+  <label><span data-i="photo"></span><input class="f" type="file" id="foto" accept="image/*" capture="environment"></label>
+  <p class="text-sm p-3 rounded bg-red-50 border border-red-300" data-i="avg"></p>
+  <p class="text-sm opacity-75" data-i="pub"></p>
+  <button class="b" data-i="save"></button>
+  <p id="st" role="status" class="font-semibold"></p>
+ </form>
+</section>
+<section>
+ <h2 class="text-xl font-bold mb-3" data-i="log"></h2>
+ <div class="grid grid-cols-3 gap-3 mb-4 ui text-center" id="stats"></div>
+ <div class="grid sm:grid-cols-4 gap-2 mb-3 ui">
+  <input class="f" id="q" data-p="search">
+  <select class="f" id="fc"></select>
+  <input class="f" type="date" id="fd" aria-label="Vanaf / From">
+  <select class="f" id="so"></select>
+ </div>
+ <button class="b2 mb-3 ui" id="ex" data-i="export"></button>
+ <div id="list" class="space-y-3"></div>
+</section>
+</main>
+<script>
+const T={nl:{title:"Stooklogboek",sub:"Registreer rook-, houtstook- en geuroverlast. Alle meldingen komen in één openbaar dossier voor gemeente en handhaving.",share:"Deel in buurt-app",form:"Nieuwe melding",weather:"Actuele weerdata ophalen",gps:"Gebruik mijn locatie",date:"Datum",start:"Begintijd",end:"Eindtijd",country:"Land",loc:"Postcode of plaats",street:"Straat of wijk (geen huisnummer)",code:"Stookadvies",geel:"🟡 Geel – overlast mogelijk",oranje:"🟠 Oranje – niet stoken",rood:"🔴 Rood – stookverbod",dir:"Windrichting",bft:"Windkracht (Bft)",types:"Aard van overlast",sym:"Lichamelijke klachten",note:"Toelichting",photo:"Foto (optioneel)",avg:"Upload a.u.b. geen foto's waarop gezichten, kentekens of specifieke huisnummers herkenbaar zijn.",pub:"Meldingen zijn openbaar zichtbaar.",save:"Melding opslaan",saved:"Melding opgeslagen",dup:"Er is al een melding voor deze wijk/straat rond dit tijdstip. Je kunt jouw ervaring toevoegen.",wfail:"Weerdata ophalen mislukt. Probeer een plaatsnaam of gebruik je locatie.",wok:"Weerdata ingevuld. Kies zelf het stookadvies.",need:"Kies een stookadvies en minstens één soort overlast.",err:"Opslaan mislukt",log:"Logboek",total:"Meldingen",bad:"Ongunstig stookweer",photos:"Foto's",search:"Zoek op locatie of postcode",all:"Alle codes",newest:"Nieuwste eerst",oldest:"Oudste eerst",export:"Exporteer CSV (dossier)",empty:"Geen meldingen gevonden.",wa:"Stookoverlast in onze buurt? Bekijk en voeg meldingen toe in het logboek:",wind:"Wind",shr:"Deel",t_smell:"Zware houtrookgeur",t_chem:"Chemische/plastic geur",t_smoke:"Zichtbare dichte rook",t_fog:"Laaghangende mist",s_breath:"Benauwdheid / kortademigheid",s_eyes:"Prikkende ogen/keel",s_cough:"Hoesten",s_head:"Hoofdpijn",s_win:"Ramen verplicht gesloten"},
+en:{title:"Smoke & Fire Logbook",sub:"Log smoke, wood-burning and odour nuisance. All reports go into one public record for local authorities and enforcement.",share:"Share in neighbourhood app",form:"New report",weather:"Fetch weather data",gps:"Use my location",date:"Date",start:"Start time",end:"End time",country:"Country",loc:"Postcode or city",street:"Street or area (no house number)",code:"Burn advice / air quality",geel:"🟡 Yellow – caution",oranje:"🟠 Orange – do not burn",rood:"🔴 Red – severe ban",dir:"Wind direction",bft:"Wind force (Bft)",types:"Type of nuisance",sym:"Symptoms & impact",note:"Comments",photo:"Photo (optional)",avg:"Please do not upload photos where faces, licence plates or specific house numbers are recognisable.",pub:"Reports are publicly visible.",save:"Save report",saved:"Report saved",dup:"A report already exists for this area/street around this time. You can add your experience.",wfail:"Could not fetch weather. Try a city name or use your location.",wok:"Weather filled in. Please choose the burn advice yourself.",need:"Choose a burn advice and at least one type of nuisance.",err:"Saving failed",log:"Logbook",total:"Reports",bad:"Unfavourable burning weather",photos:"Photos",search:"Search by location or postcode",all:"All codes",newest:"Newest first",oldest:"Oldest first",export:"Export CSV (dossier)",empty:"No reports found.",wa:"Smoke nuisance in our neighbourhood? View and add reports in the logbook:",wind:"Wind",shr:"Share",t_smell:"Heavy wood-smoke smell",t_chem:"Chemical/plastic smell",t_smoke:"Visible dense smoke",t_fog:"Low-hanging haze",s_breath:"Shortness of breath",s_eyes:"Stinging eyes/throat",s_cough:"Coughing",s_head:"Headache",s_win:"Forced to keep windows shut"}};
+const DIRS=['N','NE','E','SE','S','SW','W','NW'],DL={nl:['N','NO','O','ZO','Z','ZW','W','NW'],en:DIRS};
+const TY=['smell','chem','smoke','fog'].map(k=>'t_'+k),SY=['breath','eyes','cough','head','win'].map(k=>'s_'+k);
+const $=i=>document.getElementById(i),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls=(g,k,v)=>{try{return g?localStorage.getItem(k):localStorage.setItem(k,v)}catch{}};
+let lang=ls(1,'lang')||(navigator.language.startsWith('nl')?'nl':'en'),all=[],shown=[],geo=null;
+const t=k=>T[lang][k]||k, arr=s=>{try{return JSON.parse(s||'[]')}catch{return[]}};
+const chips=(id,name,keys)=>$(id).innerHTML=keys.map(k=>`<label class="chip"><input type="checkbox" name="${name}" value="${k}"><span data-i="${k}"></span></label>`).join('');
+$('codes').innerHTML=['geel','oranje','rood'].map(c=>`<label class="chip"><input type="radio" name="code" value="${c}"><span class="${c}" data-i="${c}"></span></label>`).join('');
+chips('types','ty',TY);chips('sym','sy',SY);
+function applyLang(){document.documentElement.lang=lang;$('lang').value=lang;
+ document.querySelectorAll('[data-i]').forEach(e=>e.textContent=t(e.dataset.i));
+ document.querySelectorAll('[data-p]').forEach(e=>e.placeholder=t(e.dataset.p));
+ const d=$('dir').value;$('dir').innerHTML=DIRS.map((x,i)=>`<option value="${x}">${DL[lang][i]}</option>`).join('');$('dir').value=d||'N';
+ const c=$('fc').value;$('fc').innerHTML=`<option value="">${t('all')}</option>`+['geel','oranje','rood'].map(x=>`<option value="${x}">${t(x)}</option>`).join('');$('fc').value=c;
+ const s=$('so').value;$('so').innerHTML=`<option value="new">${t('newest')}</option><option value="old">${t('oldest')}</option>`;$('so').value=s||'new';
+ render();}
+$('lang').onchange=e=>{lang=e.target.value;ls(0,'lang',lang);applyLang()};
+const now=()=>{const d=new Date();$('datum').value=d.toLocaleDateString('sv-SE');$('begin').value=d.toTimeString().slice(0,5)};
+const msg=m=>{$('st').textContent=m};
+const bft=v=>[1,6,12,20,29,39,50,62,75,89,103,118].filter(x=>v>=x).length;
+async function weather(){msg('');try{let p=geo;
+ if(!p){const q=$('loc').value.trim()||$('street').value.trim();if(!q)throw 0;
+  const g=await(await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=1`)).json();
+  if(!g.results)throw 0;p={lat:g.results[0].latitude,lon:g.results[0].longitude}}
+ const w=(await(await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh`)).json()).current;
+ $('dir').value=DIRS[Math.round(w.wind_direction_10m/45)%8];$('bft').value=bft(w.wind_speed_10m);now();msg(t('wok'));dupCheck()}
+ catch{msg(t('wfail'))}}
+$('bw').onclick=()=>{geo=null;weather()};
+$('bg').onclick=()=>navigator.geolocation.getCurrentPosition(p=>{geo={lat:p.coords.latitude,lon:p.coords.longitude};weather()},()=>msg(t('wfail')));
+const mins=s=>{const[a,b]=(s||'0:0').split(':');return a*60+ +b};
+function dupCheck(){const s=$('street').value.trim().toLowerCase();
+ $('dup').classList.toggle('hidden',!(s&&all.some(m=>(m.straatnaam||'').toLowerCase()===s&&m.datum===$('datum').value&&Math.abs(mins(m.begintijd)-mins($('begin').value))<=60)))}
+['street','datum','begin'].forEach(i=>$(i).addEventListener('input',dupCheck));
+$('fm').onsubmit=async e=>{e.preventDefault();const c=document.querySelector('input[name=code]:checked'),ty=[...document.querySelectorAll('input[name=ty]:checked')].map(x=>x.value);
+ if(!c||!ty.length)return msg(t('need'));
+ const f=new FormData(),v=i=>$(i).value.trim();
+ Object.entries({datum:v('datum'),begintijd:v('begin'),eindtijd:v('eind'),land:v('land'),locatie_postcode:v('loc'),straatnaam:v('street'),stookwijzer_code:c.value,windrichting:v('dir'),windkracht:v('bft'),overlast_types:JSON.stringify(ty),klachten:JSON.stringify([...document.querySelectorAll('input[name=sy]:checked')].map(x=>x.value)),opmerking:v('note')}).forEach(([k,x])=>f.append(k,x));
+ if($('foto').files[0])f.append('foto',$('foto').files[0]);
+ try{const r=await fetch('/api/meldingen',{method:'POST',body:f});if(!r.ok)throw 0;$('fm').reset();now();msg(t('saved'));await load()}catch{msg(t('err'))}};
+function waShare(x){window.open('https://wa.me/?text='+encodeURIComponent(t('wa')+(x?' '+x:'')+' '+location.origin))}
+$('wa').onclick=()=>waShare();
+function render(){const q=$('q').value.toLowerCase(),c=$('fc').value,d=$('fd').value,old=$('so').value==='old';
+ shown=all.filter(m=>(!q||`${m.locatie_postcode} ${m.straatnaam}`.toLowerCase().includes(q))&&(!c||m.stookwijzer_code===c)&&(!d||m.datum>=d)).sort((a,b)=>(a.datum+a.begintijd).localeCompare(b.datum+b.begintijd)*(old?1:-1));
+ const st=[[t('total'),shown.length],[t('bad'),shown.filter(m=>m.stookwijzer_code!=='geel').length],[t('photos'),shown.filter(m=>m.foto_url).length]];
+ $('stats').innerHTML=st.map(([l,n])=>`<div class="bg-white rounded-lg p-3"><div class="text-2xl font-bold">${n}</div><div class="text-xs">${l}</div></div>`).join('');
+ const bg={geel:'#facc15',oranje:'#f97316',rood:'#dc2626'};
+ $('list').innerHTML=shown.map((m,i)=>`<article class="bg-white rounded-lg p-4 ui border-l-8" style="border-color:${bg[m.stookwijzer_code]||'#999'}">
+  <div class="flex justify-between gap-2 flex-wrap"><b>${esc(m.datum)} ${esc(m.begintijd)}${m.eindtijd?'–'+esc(m.eindtijd):''}</b><span>${esc(t(m.stookwijzer_code))}</span></div>
+  <div class="text-sm">${esc([m.straatnaam,m.locatie_postcode,m.land].filter(Boolean).join(', '))} · ${t('wind')} ${esc(DL[lang][DIRS.indexOf(m.windrichting)]||m.windrichting)} ${esc(m.windkracht)} Bft</div>
+  <div class="text-sm mt-1">${[...arr(m.overlast_types),...arr(m.klachten)].map(k=>esc(t(k))).join(', ')}</div>
+  ${m.opmerking?`<p class="text-sm mt-1">${esc(m.opmerking)}</p>`:''}
+  ${m.foto_url?`<a href="${esc(m.foto_url)}" target="_blank" rel="noopener"><img src="${esc(m.foto_url)}" alt="" loading="lazy" class="mt-2 h-24 rounded"></a>`:''}
+  <button class="b2 mt-2 text-sm" data-sh="${i}">${t('shr')}</button></article>`).join('')||`<p>${t('empty')}</p>`;
+ document.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{const m=shown[b.dataset.sh];waShare(`${m.datum} ${m.straatnaam||m.locatie_postcode||''} – ${m.stookwijzer_code}`)})}
+['q','fc','fd','so'].forEach(i=>$(i).addEventListener('input',render));
+$('ex').onclick=()=>{const cols=['id','datum','begintijd','eindtijd','land','locatie_postcode','straatnaam','stookwijzer_code','windrichting','windkracht','overlast_types','klachten','opmerking','foto_url','created_at'];
+ const cell=v=>{v=String(v??'');if(/^[=+\-@]/.test(v))v="'"+v;return `"${v.replace(/"/g,'""')}"`};
+ const rows=shown.map(m=>cols.map(c=>cell(c==='foto_url'&&m[c]?location.origin+m[c]:m[c])).join(','));
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+[cols.join(','),...rows].join('\r\n')],{type:'text/csv'}));a.download='stooklogboek.csv';a.click()};
+async function load(){try{all=await(await fetch('/api/meldingen')).json();render()}catch{}}
+now();applyLang();load();
+</script></body></html>

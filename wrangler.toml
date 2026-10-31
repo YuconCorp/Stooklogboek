@@ -1,0 +1,12 @@
+name = "stooklogboek"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "stooklogboek-db"
+database_id = "VUL-HIER-JE-D1-DATABASE-ID-IN"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "stooklogboek-fotos"
