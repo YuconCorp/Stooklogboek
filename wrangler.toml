@@ -5,5 +5,5 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "stooklogboek-db"
-database_id = "VUL-HIER-JE-D1-DATABASE-ID-IN"
+database_id = "e90a5475-62d4-4c14-b48e-b7603c746516"
 
