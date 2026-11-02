@@ -98,7 +98,9 @@ async function weather(){msg('');try{let p=geo;
  $('dir').value=DIRS[Math.round(w.wind_direction_10m/45)%8];$('bft').value=bft(w.wind_speed_10m);now();msg(t('wok'));dupCheck()}
  catch{msg(t('wfail'))}}
 $('bw').onclick=()=>{geo=null;weather()};
-$('bg').onclick=()=>navigator.geolocation.getCurrentPosition(p=>{geo={lat:p.coords.latitude,lon:p.coords.longitude};weather()},()=>msg(t('wfail')));
+$('bg').onclick=()=>{const nl=lang==='nl';if(!navigator.geolocation)return msg(nl?'Locatie wordt niet ondersteund door deze browser.':'Geolocation is not supported by this browser.');
+ msg(nl?'Locatie ophalen…':'Getting your location…');
+ navigator.geolocation.getCurrentPosition(p=>{geo={lat:p.coords.latitude,lon:p.coords.longitude};weather()},e=>msg(e.code===1?(nl?'Toegang tot locatie geweigerd. Sta locatie toe in je browserinstellingen voor deze site.':'Location access denied. Allow location for this site in your browser settings.'):(nl?'Locatie niet beschikbaar. Vul een plaatsnaam in.':'Location unavailable. Enter a city name instead.')),{timeout:10000})};
 const mins=s=>{const[a,b]=(s||'0:0').split(':');return a*60+ +b};
 function dupCheck(){const s=$('street').value.trim().toLowerCase();
  $('dup').classList.toggle('hidden',!(s&&all.some(m=>(m.straatnaam||'').toLowerCase()===s&&m.datum===$('datum').value&&Math.abs(mins(m.begintijd)-mins($('begin').value))<=60)))}
