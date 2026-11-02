@@ -39,9 +39,8 @@ h1,h2,button,label,select,input,.ui{font-family:system-ui,sans-serif}
   <div class="grid md:grid-cols-2 gap-3">
    <label><span data-i="loc"></span><input class="f" id="loc" maxlength="60"></label>
    <label><span data-i="street"></span><input class="f" id="street" maxlength="100"></label>
-     <div class="flex flex-wrap gap-2"><button type="button" class="b2" id="bw" data-i="weather"></button><button type="button" class="b2" id="bg" data-i="gps"></button></div>
-     <div class="flex flex-wrap items-center gap-2"><button type="button" class="b2" id="bw" data-i="weather"></button><button type="button" class="b2" id="bg" data-i="gps"></button><span id="st" role="status" class="font-semibold"></span></div>
   </div>
+  <div class="flex flex-wrap items-center gap-2"><button type="button" class="b2" id="bw" data-i="weather"></button><button type="button" class="b2" id="bg" data-i="gps"></button><span id="st" role="status" class="font-semibold"></span></div>
   <p id="dup" class="hidden p-3 rounded bg-amber-100 border border-amber-400 text-sm" data-i="dup"></p>
   <fieldset><legend class="font-semibold" data-i="code"></legend><div class="grid sm:grid-cols-3 gap-2 code mt-1" id="codes"></div></fieldset>
   <div class="grid grid-cols-2 gap-3">
@@ -53,7 +52,6 @@ h1,h2,button,label,select,input,.ui{font-family:system-ui,sans-serif}
   <label><span data-i="note"></span><textarea class="f" id="note" rows="3" maxlength="1000"></textarea></label>
   <p class="text-sm opacity-75" data-i="pub"></p>
   <button class="b" data-i="save"></button>
-  <p id="st" role="status" class="font-semibold"></p>
  </form>
 </section>
 <section>
@@ -122,7 +120,6 @@ function render(){const q=$('q').value.toLowerCase(),c=$('fc').value,d=$('fd').v
   <div class="text-sm">${esc([m.straatnaam,m.locatie_postcode,m.land].filter(Boolean).join(', '))} · ${t('wind')} ${esc(DL[lang][DIRS.indexOf(m.windrichting)]||m.windrichting)} ${esc(m.windkracht)} Bft</div>
   <div class="text-sm mt-1">${[...arr(m.overlast_types),...arr(m.klachten)].map(k=>esc(t(k))).join(', ')}</div>
   ${m.opmerking?`<p class="text-sm mt-1">${esc(m.opmerking)}</p>`:''}
-  ${m.foto_url?`<a href="${esc(m.foto_url)}" target="_blank" rel="noopener"><img src="${esc(m.foto_url)}" alt="" loading="lazy" class="mt-2 h-24 rounded"></a>`:''}
   <button class="b2 mt-2 text-sm" data-sh="${i}">${t('shr')}</button></article>`).join('')||`<p>${t('empty')}</p>`;
  document.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{const m=shown[b.dataset.sh];waShare(`${m.datum} ${m.straatnaam||m.locatie_postcode||''} – ${m.stookwijzer_code}`)})}
 ['q','fc','fd','so'].forEach(i=>$(i).addEventListener('input',render));
