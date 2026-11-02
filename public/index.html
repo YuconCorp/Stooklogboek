@@ -30,7 +30,6 @@ h1,h2,button,label,select,input,.ui{font-family:system-ui,sans-serif}
 <section>
  <h2 class="text-xl font-bold mb-3" data-i="form"></h2>
  <form id="fm" class="space-y-4 ui">
-  <div class="flex flex-wrap gap-2"><button type="button" class="b2" id="bw" data-i="weather"></button><button type="button" class="b2" id="bg" data-i="gps"></button></div>
   <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
    <label><span data-i="date"></span><input class="f" type="date" id="datum" required></label>
    <label><span data-i="start"></span><input class="f" type="time" id="begin" required></label>
@@ -40,6 +39,7 @@ h1,h2,button,label,select,input,.ui{font-family:system-ui,sans-serif}
   <div class="grid md:grid-cols-2 gap-3">
    <label><span data-i="loc"></span><input class="f" id="loc" maxlength="60"></label>
    <label><span data-i="street"></span><input class="f" id="street" maxlength="100"></label>
+     <div class="flex flex-wrap gap-2"><button type="button" class="b2" id="bw" data-i="weather"></button><button type="button" class="b2" id="bg" data-i="gps"></button></div>
   </div>
   <p id="dup" class="hidden p-3 rounded bg-amber-100 border border-amber-400 text-sm" data-i="dup"></p>
   <fieldset><legend class="font-semibold" data-i="code"></legend><div class="grid sm:grid-cols-3 gap-2 code mt-1" id="codes"></div></fieldset>
